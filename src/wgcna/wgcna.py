@@ -1,11 +1,8 @@
-
 # Importing package modules
 from . import common
 from . import adjacency
 from . import connectivity
 
-# magic imputation
-import magic
 import numpy as np
 import pandas as pd
 
@@ -20,14 +17,17 @@ import scipy.cluster.hierarchy as sch
 
 from dynamicTreeCut import cutreeHybrid
 
-def run_wgcna(adata: ad.AnnData, adjacency_type: str = 'unsigned', cutoff: float = 0.1, min_cluster_size: int = 10, cluster_method: str = "hierarchical", cluster_height = 0.3):
-    """_summary_
+def run_wgcna(adata: ad.AnnData, adjacency_type: str = 'unsigned', cutoff: float = 1):
+    """Runs WGCNA
 
     Args:
-        adata (_type_): _description_
+        adata (ad.AnnData): Dataset of interest.
+        adjacency_type (str): adjacency type of ['signed', 'unsigned', 'signed_hybrid']
 
     Returns:
-        _type_: _description_
+        sns.ClusterMap: seaborn clustermap of TOM 
+        np.array: array of boolean values to index their adata.var 
+        np.array: clustering labels.
     """
 
     # calculate adjacency
@@ -46,19 +46,23 @@ def run_wgcna(adata: ad.AnnData, adjacency_type: str = 'unsigned', cutoff: float
 
     tom = connectivity.compute_tom(corr**scale_free_power)
 
-    indexer, clustermap, labels = generate_gene_modules(tom, cutoff, min_cluster_size, cluster_method, cluster_height)
+    clustermap, indexer, labels = generate_gene_modules(tom, cutoff)
 
     return clustermap, indexer, labels
 
-def generate_gene_modules(tom: np.ndarray, cutoff: float = 0.1, min_cluster_size: int = 10, cluster_method: str = "hierarchical", cluster_height = 0.3):
-    """_summary_
+def generate_gene_modules(tom: np.ndarray, cutoff: float = 1):
+    """Generate Gene Modules using Adaptive Tree Cuts and  
 
     Args:
         tom (np.ndarray): Topological overlap matrix.
-        cutoff (float, optional): Percentage of genes to include when clustering. Defaults to 0.2.
+        cutoff (float, optional): Percentage of genes to include when clustering. Defaults to 1.
+    
+    Returns:
+        sns.ClusterMap: seaborn clustermap of TOM 
+        np.array: array of boolean values to index their adata.var 
+        np.array: clustering labels.
     """
     # TODO: make cutoff adaptive
-    print(int(tom.shape[0]*cutoff))
     cutoff_max_connectivity = pd.Series(tom.sum(axis=0)) \
         .sort_values() \
         .iloc[-int(tom.shape[0]*cutoff)]
@@ -68,15 +72,8 @@ def generate_gene_modules(tom: np.ndarray, cutoff: float = 0.1, min_cluster_size
 
     indexer = (tom.sum(axis=0)>cutoff_max_connectivity)
 
-    if cluster_method == "hdbscan":
-        labels = HDBSCAN(min_cluster_size=min_cluster_size) \
-            .fit(tom[indexer][:, indexer]) \
-            .labels_
-        
-
-    if cluster_method == "hierarchical":
-        Z = sch.linkage(tom[indexer][:, indexer], method='ward')
-        labels = cutreeHybrid(Z, tom)
+    Z = sch.linkage(tom[indexer][:, indexer], method='ward')
+    labels = cutreeHybrid(Z, tom)
 
     color_mapping = common.values_to_hex(labels, "tab20")
     row_colors = np.array([color_mapping[label] for label in labels])
@@ -84,4 +81,4 @@ def generate_gene_modules(tom: np.ndarray, cutoff: float = 0.1, min_cluster_size
     clustermap = sns.clustermap(tom[indexer][:, indexer], row_colors=row_colors, col_colors=row_colors)
 
     # TODO: return dict of module ids and gene names
-    return indexer, clustermap, labels
+    return clustermap, indexer, labels

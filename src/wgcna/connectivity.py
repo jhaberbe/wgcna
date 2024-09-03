@@ -1,13 +1,13 @@
 import numpy as np
 
 def compute_tom(adjacency_matrix):
-    """_summary_
+    """Compute Topological Overlap Matrix
 
     Args:
-        adjacency_matrix (_type_): _description_
+        adjacency_matrix (np.array): Pearson correlation (or other similarity measure). 
 
     Returns:
-        _type_: _description_
+        np.array: Topological Overlap Matrix
     """
     # Ensure adjacency matrix is numpy array
     A = np.array(adjacency_matrix)
@@ -33,13 +33,13 @@ def compute_tom(adjacency_matrix):
     return TOM
 
 def compute_scale_free_power(corr_coef):
-    """_summary_
+    """Compute Scale Free Power using heuristic log(connectivity) vs log(p(k))
 
     Args:
-        corr_coef (_type_): _description_
+        corr_coef (np.array): Pairwise Pearson's correlation
 
     Returns:
-        _type_: _description_
+        int: smallest power that induces a scale free topology (R^2 of 0.8).
     """
     # Create a copy of the original correlation coefficient matrix
     corr_coef_copy = corr_coef.copy()

@@ -2,10 +2,13 @@ import numpy as np
 import anndata as ad
 
 def unsigned_adjacency(adata: ad.AnnData):
-    """_summary_
+    """Unsigned Adjacency
 
     Args:
-        data (_type_): _description_
+        adata (ad.AnnData): AnnData object
+
+    Returns:
+        np.array: signed pearson's correlation array.
     """
     try: 
         data = adata.X.todense()
@@ -17,10 +20,13 @@ def unsigned_adjacency(adata: ad.AnnData):
     return np.abs(data)
 
 def signed_adjacency(adata: ad.AnnData):
-    """_summary_
+    """Signed Adjacency
 
     Args:
-        data (_type_): _description_
+        adata (ad.AnnData): AnnData object
+
+    Returns:
+        np.array: signed pearson's correlation array.
     """
     try: 
         data = adata.X.todense()
@@ -32,10 +38,13 @@ def signed_adjacency(adata: ad.AnnData):
     return (1 + data) / 2
 
 def signed_hybrid_adjacency(adata: ad.AnnData):
-    """_summary_
+    """Signed Hybrid Adjacency
 
     Args:
-        data (_type_): _description_
+        adata (ad.AnnData): AnnData object
+
+    Returns:
+        np.array: signed pearson's correlation array.
     """
     try: 
         data = adata.X.todense()

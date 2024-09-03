@@ -4,6 +4,13 @@ import matplotlib
 import matplotlib.pyplot as plt
 
 def annotate_gene_groups(adata):
+    """Annotate Gene Groups
+    Args:
+        adata (ad.AnnData): AnnData with gene information.
+    
+    Returns:
+        ad.AnnData: AnnData with updated .var fields for mitochondrial, ribosomal, heme, linc, and antisense genes
+    """
     # mitochondrial genes, "MT-" for human, "Mt-" for mouse
     adata.var["mt"] = adata.var_names.str.startswith("MT-")
     # ribosomal genes
@@ -25,15 +32,15 @@ def annotate_gene_groups(adata):
 
 
 def select_genes(adata, mask_cols = ["linc", "mt", "ribo", "hb", "antisense"], percent_threshold = 0.05):
-    """_summary_
+    """Select a subset of adata based on expression threshold and mask columns. 
 
     Args:
-        adata (_type_): _description_
-        mask_cols (list, optional): _description_. Defaults to ["mt", "ribo", "hb"].
-        percent_threshold (float, optional): _description_. Defaults to 0.05.
+        adata (ad.AnnData): Annotated Dataset
+        mask_cols (list, optional): list of columns to mask by (excludes). Defaults to ["linc", "mt", "ribo", "hb", "antisense"].
+        percent_threshold (float, optional): Percent of cells that need to express in order to work. Defaults to 0.05.
 
     Returns:
-        _type_: _description_
+        ad.AnnData: Subsetted adata with genes that meet the criteria.
     """
     adata = annotate_gene_groups(adata)
 
@@ -44,8 +51,7 @@ def select_genes(adata, mask_cols = ["linc", "mt", "ribo", "hb", "antisense"], p
 
 
 def values_to_hex(values, cmap_name='tab20'):
-    """
-    Converts unique values in a list to their corresponding hex color values using a specified colormap.
+    """Converts unique values in a list to their corresponding hex color values using a specified colormap.
 
     Args:
         values (list): List of unique values to convert to hex colors.
