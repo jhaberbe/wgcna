@@ -55,8 +55,10 @@ def compute_scale_free_power(corr_coef):
         k = np.nansum(corr_coef_copy, axis=0) + 1e-10
         
         # Compute the histogram of the logarithm of k
-        p, logk = np.histogram(np.log10(k))
+        p, k = np.histogram(k)
         
+        logk = np.log10(k)
+
         # Normalize the histogram and calculate the squared correlation coefficient (r2)
         normalized_p = np.log10(p / p.sum())
         r2 = np.corrcoef(logk[1:], normalized_p)[0, 1] ** 2

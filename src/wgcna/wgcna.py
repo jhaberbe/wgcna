@@ -1,4 +1,3 @@
-"""Main module."""
 
 # Importing package modules
 from . import common
@@ -7,7 +6,6 @@ from . import connectivity
 
 # magic imputation
 import magic
-
 import numpy as np
 import pandas as pd
 
@@ -20,7 +18,9 @@ import matplotlib.pyplot as plt
 from sklearn.cluster import HDBSCAN
 import scipy.cluster.hierarchy as sch
 
-def run_wgcna(adata: ad.AnnData, adjacency_type: str = 'unsigned', cutoff: float = 0.1, min_cluster_size: int = 10, cluster_method: str = "hierarchical", n_jobs=10, cluster_height = 0.3):
+from dynamicTreeCut import cutreeHybrid
+
+def run_wgcna(adata: ad.AnnData, adjacency_type: str = 'unsigned', cutoff: float = 0.1, min_cluster_size: int = 10, cluster_method: str = "hierarchical", cluster_height = 0.3):
     """_summary_
 
     Args:
@@ -29,9 +29,6 @@ def run_wgcna(adata: ad.AnnData, adjacency_type: str = 'unsigned', cutoff: float
     Returns:
         _type_: _description_
     """
-
-    magic_operator = magic.MAGIC(n_jobs=n_jobs)
-    adata = magic_operator.fit_transform(adata)
 
     # calculate adjacency
     if adjacency_type == 'unsigned':
@@ -75,13 +72,11 @@ def generate_gene_modules(tom: np.ndarray, cutoff: float = 0.1, min_cluster_size
         labels = HDBSCAN(min_cluster_size=min_cluster_size) \
             .fit(tom[indexer][:, indexer]) \
             .labels_
+        
 
     if cluster_method == "hierarchical":
         Z = sch.linkage(tom[indexer][:, indexer], method='average')
-        # TODO: test if 70% is a good threshold
-        # I think they used 99%
-        max_d = cluster_height * Z[:, 2].max()  # example of an adaptive threshold; this would typically be calculated based on data characteristics
-        labels = sch.fcluster(Z, max_d, criterion='distance')
+        labels = cutreeHybrid(Z, tom)
 
     color_mapping = common.values_to_hex(labels, "tab20")
     row_colors = np.array([color_mapping[label] for label in labels])

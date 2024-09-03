@@ -25,7 +25,8 @@ dependencies = [
     "matplotlib",
     "seaborn",
     "scipy",
-    "anndata"
+    "anndata",
+    "dynamicTreeCut"
 ]
 
 [project.optional-dependencies]
