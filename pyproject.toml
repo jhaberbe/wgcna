@@ -19,7 +19,7 @@ classifiers = [
 license = {text = "GNU General Public License v3"}
 dependencies = [
     "scanpy",
-    "sklearn",
+    "scikit-learn",
     "magic-impute",
     "numpy",
     "matplotlib",
