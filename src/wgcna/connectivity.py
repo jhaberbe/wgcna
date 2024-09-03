@@ -49,7 +49,7 @@ def compute_scale_free_power(corr_coef):
     power_max = 0
 
     # Iterate until r2 reaches 0.8 or power exceeds 12
-    for power in range(1, 13):
+    for power in range(1, 21):
 
         # Compute the sum across axis 0 with a small constant added
         k = np.nansum(corr_coef_copy, axis=0) + 1e-10

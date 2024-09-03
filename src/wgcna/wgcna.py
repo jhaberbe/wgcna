@@ -20,7 +20,7 @@ import matplotlib.pyplot as plt
 from sklearn.cluster import HDBSCAN
 import scipy.cluster.hierarchy as sch
 
-def run_wgcna(adata: ad.AnnData, adjacency_type: str = 'unsigned', cutoff: float = 0.1, min_cluster_size: int = 10, cluster_method: str = "hierarchical", n_jobs=10):
+def run_wgcna(adata: ad.AnnData, adjacency_type: str = 'unsigned', cutoff: float = 0.1, min_cluster_size: int = 10, cluster_method: str = "hierarchical", n_jobs=10, cluster_height = 0.8):
     """_summary_
 
     Args:
@@ -49,11 +49,11 @@ def run_wgcna(adata: ad.AnnData, adjacency_type: str = 'unsigned', cutoff: float
 
     tom = connectivity.compute_tom(corr**scale_free_power)
 
-    indexer, clustermap, labels = generate_gene_modules(tom, cutoff, min_cluster_size, cluster_method)
+    indexer, clustermap, labels = generate_gene_modules(tom, cutoff, min_cluster_size, cluster_method, cluster_height)
 
     return clustermap, indexer, labels
 
-def generate_gene_modules(tom: np.ndarray, cutoff: float = 0.1, min_cluster_size: int = 10, cluster_method: str = "hierarchical"):
+def generate_gene_modules(tom: np.ndarray, cutoff: float = 0.1, min_cluster_size: int = 10, cluster_method: str = "hierarchical", cluster_height = 0.8):
     """_summary_
 
     Args:
@@ -80,7 +80,7 @@ def generate_gene_modules(tom: np.ndarray, cutoff: float = 0.1, min_cluster_size
         Z = sch.linkage(tom[indexer][:, indexer], method='average')
         # TODO: test if 70% is a good threshold
         # I think they used 99%
-        max_d = 0.9 * Z[:, 2].max()  # example of an adaptive threshold; this would typically be calculated based on data characteristics
+        max_d = cluster_height * Z[:, 2].max()  # example of an adaptive threshold; this would typically be calculated based on data characteristics
         labels = sch.fcluster(Z, max_d, criterion='distance')
 
     color_mapping = common.values_to_hex(labels, "tab20")
