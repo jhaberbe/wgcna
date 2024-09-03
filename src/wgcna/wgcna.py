@@ -75,7 +75,7 @@ def generate_gene_modules(tom: np.ndarray, cutoff: float = 0.1, min_cluster_size
         
 
     if cluster_method == "hierarchical":
-        Z = sch.linkage(tom[indexer][:, indexer], method='average')
+        Z = sch.linkage(tom[indexer][:, indexer], method='ward')
         labels = cutreeHybrid(Z, tom)
 
     color_mapping = common.values_to_hex(labels, "tab20")
