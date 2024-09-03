@@ -1,9 +1,9 @@
 """Main module."""
 
 # Importing package modules
-import common
-import adjacency
-import connectivity
+from . import common
+from . import adjacency
+from . import connectivity
 
 # magic imputation
 import magic
