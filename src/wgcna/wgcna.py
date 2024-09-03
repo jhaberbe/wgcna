@@ -20,7 +20,7 @@ import matplotlib.pyplot as plt
 from sklearn.cluster import HDBSCAN
 import scipy.cluster.hierarchy as sch
 
-def run_wgcna(adata: ad.AnnData, adjacency_type: str = 'unsigned', cutoff: float = 0.1, min_cluster_size: int = 10, cluster_method: str = "hierarchical", n_jobs=10, cluster_height = 0.8):
+def run_wgcna(adata: ad.AnnData, adjacency_type: str = 'unsigned', cutoff: float = 0.1, min_cluster_size: int = 10, cluster_method: str = "hierarchical", n_jobs=10, cluster_height = 0.3):
     """_summary_
 
     Args:
@@ -53,7 +53,7 @@ def run_wgcna(adata: ad.AnnData, adjacency_type: str = 'unsigned', cutoff: float
 
     return clustermap, indexer, labels
 
-def generate_gene_modules(tom: np.ndarray, cutoff: float = 0.1, min_cluster_size: int = 10, cluster_method: str = "hierarchical", cluster_height = 0.8):
+def generate_gene_modules(tom: np.ndarray, cutoff: float = 0.1, min_cluster_size: int = 10, cluster_method: str = "hierarchical", cluster_height = 0.3):
     """_summary_
 
     Args:
