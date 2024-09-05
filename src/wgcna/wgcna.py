@@ -75,7 +75,7 @@ def generate_gene_modules(tom: np.ndarray, cutoff: float = 1):
     Z = sch.linkage(tom[indexer][:, indexer], method='ward')
     labels = cutreeHybrid(Z, tom)
 
-    color_mapping = common.values_to_hex(labels, "tab20")
+    color_mapping = common.values_to_hex(labels["labels"], "tab20")
     row_colors = np.array([color_mapping[label] for label in labels["labels"]])
 
     clustermap = sns.clustermap(tom[indexer][:, indexer], row_colors=row_colors, col_colors=row_colors)
