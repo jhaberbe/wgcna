@@ -5,9 +5,6 @@
 import pytest
 
 
-from wgcna import wgcna
-
-
 @pytest.fixture
 def response():
     """Sample pytest fixture.
