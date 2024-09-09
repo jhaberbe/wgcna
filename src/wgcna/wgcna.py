@@ -48,7 +48,7 @@ def run_wgcna(adata: ad.AnnData, adjacency_type: str = 'unsigned'):
 
     tom = connectivity.compute_tom(corr**scale_free_power)
 
-    clustermap, indexer, labels = generate_gene_modules(tom, cutoff)
+    labels = generate_gene_modules(tom)
 
     adata.var["module"] = labels
 
@@ -57,16 +57,14 @@ def run_wgcna(adata: ad.AnnData, adjacency_type: str = 'unsigned'):
             tom[labels==module_label][:, labels==module_label].sum(axis=1),
             index = adata.var_names[labels==2]
         ).sort_values(axis=0, ascending=False)
-    
 
     return gene_modules
 
-def generate_gene_modules(tom: np.ndarray, cutoff: float = 1):
+def generate_gene_modules(tom: np.ndarray, plot=True):
     """Generate Gene Modules using Adaptive Tree Cuts and  
 
     Args:
         tom (np.ndarray): Topological overlap matrix.
-        cutoff (float, optional): Percentage of genes to include when clustering. Defaults to 1.
     
     Returns:
         sns.ClusterMap: seaborn clustermap of TOM 
@@ -75,21 +73,16 @@ def generate_gene_modules(tom: np.ndarray, cutoff: float = 1):
     """
     # TODO: make cutoff adaptive
     cutoff_max_connectivity = pd.Series(tom.sum(axis=0)) \
-        .sort_values() \
-        .iloc[-int(tom.shape[0]*cutoff)]
+        .sort_values()
 
-    if cutoff == 1:
-        cutoff_max_connectivity = 0
-
-    indexer = (tom.sum(axis=0)>cutoff_max_connectivity)
-
-    Z = sch.linkage(tom[indexer][:, indexer], method='ward')
+    Z = sch.linkage(tom, method='ward')
     labels = cutreeHybrid(Z, tom)
 
     color_mapping = common.values_to_hex(labels["labels"], "tab20")
     row_colors = np.array([color_mapping[label] for label in labels["labels"]])
 
-    clustermap = sns.clustermap(tom[indexer][:, indexer], row_colors=row_colors, col_colors=row_colors)
+    if plot: 
+        sns.clustermap(tom, row_colors=row_colors, col_colors=row_colors)
 
     # TODO: return dict of module ids and gene names
-    return clustermap, indexer, labels["labels"]
+    return labels["labels"]
