@@ -17,7 +17,7 @@ import scipy.cluster.hierarchy as sch
 
 from dynamicTreeCut import cutreeHybrid
 
-def run_wgcna(adata: ad.AnnData, adjacency_type: str = 'unsigned', cutoff: float = 1):
+def run_wgcna(adata: ad.AnnData, adjacency_type: str = 'unsigned'):
     """Runs WGCNA
 
     Args:
@@ -29,6 +29,8 @@ def run_wgcna(adata: ad.AnnData, adjacency_type: str = 'unsigned', cutoff: float
         np.array: array of boolean values to index their adata.var 
         np.array: clustering labels.
     """
+
+    gene_modules = dict()
 
     # calculate adjacency
     if adjacency_type == 'unsigned':
@@ -48,7 +50,16 @@ def run_wgcna(adata: ad.AnnData, adjacency_type: str = 'unsigned', cutoff: float
 
     clustermap, indexer, labels = generate_gene_modules(tom, cutoff)
 
-    return clustermap, indexer, labels
+    adata.var["module"] = labels
+
+    for module_label in np.unique(labels):
+        gene_modules[module_label] = pd.Series(
+            tom[labels==module_label][:, labels==module_label].sum(axis=1),
+            index = adata.var_names[labels==2]
+        ).sort_values(axis=0, ascending=False)
+    
+
+    return gene_modules
 
 def generate_gene_modules(tom: np.ndarray, cutoff: float = 1):
     """Generate Gene Modules using Adaptive Tree Cuts and  
