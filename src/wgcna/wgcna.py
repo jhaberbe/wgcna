@@ -55,7 +55,7 @@ def run_wgcna(adata: ad.AnnData, adjacency_type: str = 'unsigned'):
     for module_label in np.unique(labels):
         gene_modules[module_label] = pd.Series(
             tom[labels==module_label][:, labels==module_label].sum(axis=1),
-            index = adata.var_names[labels==2]
+            index = adata.var_names[labels==module_label]
         ).sort_values(axis=0, ascending=False)
 
     return gene_modules
