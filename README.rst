@@ -22,6 +22,8 @@ WGCNA
 
 WGCNA in Python. Fast.
 
+Recommended to use magic-impute alongside, to emulate what you get with hdWGCNA.
+
 
 * Free software: GNU General Public License v3
 * Documentation: https://wgcna.readthedocs.io.
@@ -31,6 +33,10 @@ Features
 --------
 
 * TODO
+
+[ ] Ideally, lets automate the GO Term Enrichment Process using gprofiler and maybe something like chat-gpt
+[ ] Hub Gene Identification
+[ ] Extra QC Steps that people should already be taking.
 
 Credits
 -------
