@@ -12,7 +12,6 @@ import anndata as ad
 import seaborn as sns
 import matplotlib.pyplot as plt
 
-from sklearn.cluster import HDBSCAN
 import scipy.cluster.hierarchy as sch
 
 from dynamicTreeCut import cutreeHybrid
