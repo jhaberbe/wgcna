@@ -2,9 +2,16 @@ import numpy as np
 import anndata as ad
 from sklearn.covariance import ShrunkCovariance
 
-def estimate_covariance(data):
-    if data.shape[1] > data.shape[0]:
-        data = ShrunkCovariance().fit(data.T)
+def estimate_covariance(data, covariance_shrinkage = True):
+    """Estimate Covariance
+    Args: 
+        data (np.array): some kind of numpy array, should be square. 
+    
+    Returns: 
+        np.array: correlation matrix.
+    """
+    if covariance_shrinkage:
+        data = ShrunkCovariance().fit(data)
     else:    
         data = np.corrcoef(data.T)
     return data
