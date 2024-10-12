@@ -11,7 +11,8 @@ def estimate_covariance(data, covariance_shrinkage = True):
         np.array: correlation matrix.
     """
     if covariance_shrinkage:
-        data = ShrunkCovariance().fit(data)
+        cov = ShrunkCovariance().fit(data)
+        data = cov.covariance_
     else:    
         data = np.corrcoef(data.T)
     return data
